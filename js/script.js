@@ -95,7 +95,7 @@ $(document).ready(function() {
         } 
     }
 
-    // "Payment Info", initial display, hides all payments except credit-card, add ID attr to paypal & bitcoin
+    // "Payment Info", initial display, hides all payments except credit-card, Stores, select, and add ID attr to paypal & bitcoin <p>
     // Credit-card becomes default payment selection  
     function initialPaymentDisplay(){
         const paypalDiv = $($('div:has(p)')[1]).attr('id','js-paypal');
@@ -134,7 +134,7 @@ $(document).ready(function() {
         event.css("border-color","red");
     }
 
-    // Validates any input (except Name input) with a Regular Expression
+    // Validates inputs for email & payments with Regular Expression
     function regexValidation(event, eventTag) {
          const emailRegex = /^\w+@\w+\..{3}?$/;
          const creditCardRegex = /^\d{13,16}$/;
@@ -172,7 +172,7 @@ $(document).ready(function() {
         }
     }
     
-    // Validates real time errors, empty inputs, failed Regex conditions
+    // Validates real time errors, empty inputs and/or failed Regex conditions
     function validateKeyUp(event) {
         const eventTag = $(event)[0];
         event.css("border-color", "#c1deeb");
@@ -205,7 +205,7 @@ $(document).ready(function() {
             regexValidation(event, eventTag);
         }
     }
-    // Validates all necessary form requirements for project, returns a boolean to "submit" button
+    // Validates all necessary form requirements for a POST request, returns a boolean to "submit" button E.Listener
     function formValidation() {
         // Name validation
         if ($('#name').val() == '') {
@@ -217,8 +217,7 @@ $(document).ready(function() {
         else if (regexValidation($('[name="user_email"]'), $('[name="user_email"]')[0]) == false) {
             return false;
         }
-        // If Credit Card Option True, validates payment info
-        //let emptyCreditCardInfo = 0;   
+        // If Credit Card Option True, Payment Regex validation
         else if ($('#payment').val() == 'credit card') {
             if (regexValidation($('[name="user_cc-num"]'), $('[name="user_cc-num"]')[0]) == false){
                 return false;
@@ -242,7 +241,7 @@ $(document).ready(function() {
             $('#js-error-div').fadeIn(200).delay(1500).slideUp();
             return false;
         }
-
+        // If nothing returns false, return true to Button E.Listener 
         return true;
          
     }
@@ -258,7 +257,7 @@ $(document).ready(function() {
         conflictSchedule($(this));
     });
    // E Listener for "Job Role"
-    $('#title').on('change', function() {
+    $('#title').change( function() {
         hideTextArea($(this));       
     });
     // E Listener for "Payment Method"
@@ -278,6 +277,8 @@ $(document).ready(function() {
     }, function(){
         return;
     });
+
+    
     // Initialize Program //
     startProgram();
 
