@@ -122,7 +122,7 @@ $(document).ready(function() {
         }
     }
 
-    // Adds a JS data-error attr / Displays a error message
+    // Displays a error message
     function formErrorMessage(event, message){
         $('#js-error-div').text(`${message}`);
         $('#js-error-div').fadeIn(200).delay(1500).slideUp();
