@@ -74,7 +74,7 @@ $(document).ready(function() {
         const userScheduleActivity = userActivity.match(scheduleTimeRegex);
         
         if (userInputCheckbox[0].name == 'all'){
-            return false;
+            return;
         }
         if (userInputCheckbox[0].checked) {
             $('.activities > label').each(function() {
@@ -95,7 +95,7 @@ $(document).ready(function() {
         } 
     }
 
-    // "Payment Info", initial display, hides all payments except credit-card
+    // "Payment Info", initial display, hides all payments except credit-card, add ID attr to paypal & bitcoin
     // Credit-card becomes default payment selection  
     function initialPaymentDisplay(){
         const paypalDiv = $($('div:has(p)')[1]).attr('id','js-paypal');
@@ -106,7 +106,7 @@ $(document).ready(function() {
         $('[value="credit card"]').attr('selected', 'selected');
     }
 
-    // "Payment Info", Display payment option based on user selection
+    // "Payment Info", Display payment option based on user selection // credit card is set to default
     function paymentDisplay(paymentMethod) {
         $('#js-bitcoin').hide();
         $('#js-paypal').hide();
@@ -124,14 +124,12 @@ $(document).ready(function() {
 
     // Adds a JS data-error attr / Displays a error message
     function formErrorMessage(event, message){
-        event.attr('data-error','true');
         $('#js-error-div').text(`${message}`);
         $('#js-error-div').fadeIn(200).delay(1500).slideUp();
     }
 
     // Adds a JS data-error attr and sets placeholder error message
     function inputError(event, message) {  
-        event.attr('data-error','true');
         event.attr('placeholder', message);
         event.css("border-color","red");
     }
@@ -145,7 +143,7 @@ $(document).ready(function() {
          const userInput = event.val();
 
         if (eventTag.name == 'user_email') {
-            if (!emailRegex.test(userInput)) {
+            if (!emailRegex.test(userInput) || userInput == '') {
                 formErrorMessage(event, 'Invalid email address');
                 event.css("border-color","red");
                 return false;
@@ -156,22 +154,21 @@ $(document).ready(function() {
                 formErrorMessage(event, 'Card number must be (13-16) numeric digits long');
                 event.css("border-color","red");
                 return false;
-            }
-            
+            } 
         }
         if (eventTag.name == 'user_zip') {
             if (!zipRegex.test(userInput)) {
                 formErrorMessage(event, 'Zip must be 5 numeric digits');
                 event.css("border-color","red");
                 return false;
-            }
+            } 
         }
         if (eventTag.name == 'user_cvv') {
             if (!cvvRegex.test(userInput)) {
                 formErrorMessage(event, 'CVV must be 3 numeric digits');
                 event.css("border-color","red");
                 return false;
-            }
+            } 
         }
     }
     
@@ -179,7 +176,6 @@ $(document).ready(function() {
     function validateKeyUp(event) {
         const eventTag = $(event)[0];
         event.css("border-color", "#c1deeb");
-        event.removeAttr('data-error');
 
         if (eventTag.id == 'name' && event.val() == '') {
             inputError(event, 'Name is required');
@@ -209,7 +205,6 @@ $(document).ready(function() {
             regexValidation(event, eventTag);
         }
     }
-
     // Validates all necessary form requirements for project, returns a boolean to "submit" button
     function formValidation() {
         // Name validation
@@ -219,8 +214,22 @@ $(document).ready(function() {
             return false;
         }
         // Email Regex validation
-        regexValidation($('#mail'), $('#mail')[0]);
-
+        else if (regexValidation($('[name="user_email"]'), $('[name="user_email"]')[0]) == false) {
+            return false;
+        }
+        // If Credit Card Option True, validates payment info
+        //let emptyCreditCardInfo = 0;   
+        else if ($('#payment').val() == 'credit card') {
+            if (regexValidation($('[name="user_cc-num"]'), $('[name="user_cc-num"]')[0]) == false){
+                return false;
+            }
+            if (regexValidation($('[name="user_zip"]'), $('[name="user_zip"]')[0]) == false) {
+                return false;
+            }
+            if (regexValidation($('[name="user_cvv"]'), $('[name="user_cvv"]')[0]) == false) {
+                return false;
+            } 
+        } 
         // Activity Registration validation
         let numchecked = 0;
         $('input[type=checkbox]').each(function() {
@@ -234,34 +243,8 @@ $(document).ready(function() {
             return false;
         }
 
-        // If Credit Card Option True, validates payment info
-        let emptyCreditCardInfo = 0;   
-        if ($('#payment').val() == 'credit card') {
-            if (!regexValidation($('[name="user_cc-num"]'), $('[name="user_cc-num"]')[0])) {
-                emptyCreditCardInfo += 1;
-            }
-            if (!regexValidation($('[name="user_zip"]'), $('[name="user_zip"]')[0])) {
-                emptyCreditCardInfo += 1;
-            }
-            if (!regexValidation($('[name="user_cvv"]'), $('[name="user_cvv"]')[0])) {
-                emptyCreditCardInfo += 1;
-            }
-            $('div > input').each(function() {
-                if (($($(this)[0]).val()) == '') {
-                    emptyCreditCardInfo += 1;
-                }
-            });
-        }
-        if (emptyCreditCardInfo > 0){    
-            $('#js-error-div').text('Please complete the form');
-            $('#js-error-div').fadeIn(200).delay(1500).slideUp();
-            return false;
-        }
-        if (!($('*[data-error= "true"]'))) {
-            return false;
-        } else {
-            return true;
-        }
+        return true;
+         
     }
    
     // E Listener "T-Shirt Info"
@@ -292,6 +275,8 @@ $(document).ready(function() {
         if(formValidation()) {
             $(this).prop('type','submit');
         } 
+    }, function(){
+        return;
     });
     // Initialize Program //
     startProgram();
