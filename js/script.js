@@ -128,7 +128,7 @@ $(document).ready(function() {
         $('#js-error-div').fadeIn(200).delay(1500).slideUp();
     }
 
-    // Adds a JS data-error attr and sets placeholder error message
+    // Sets placeholder error message
     function inputError(event, message) {  
         event.attr('placeholder', message);
         event.css("border-color","red");
