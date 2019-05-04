@@ -32,4 +32,3 @@ This project, start as a fictional conference called "FullStack Conf. The goal i
 * “Color” drop down menu is hidden until a T-Shirt design is selected.
 * Form provides at least one error message in real time, before the form is submitted. 
 * Form provides at least one error message that changes depending on the error.
-* Background color changes each time the quote changes.
